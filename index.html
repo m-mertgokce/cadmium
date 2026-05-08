@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadmium — Le métal qui s'accumule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ede2;
+    --paper-deep: #ebe3d2;
+    --ink: #1a1612;
+    --ink-soft: #4a3f33;
+    --rouge: #b22222;
+    --rouge-deep: #7a1717;
+    --ocre: #c8852b;
+    --olive: #6a7a3f;
+    --bleu: #2d4a6b;
+    --shadow: rgba(26, 22, 18, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.55;
+    font-size: 16px;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(178, 34, 34, 0.025) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(106, 122, 63, 0.03) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
+  .container { position: relative; z-index: 2; }
+
+  /* ------- HEADER / HERO ------- */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .masthead .title-block {
+    display: flex;
+    gap: 1.8rem;
+    align-items: baseline;
+  }
+
+  .masthead .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-transform: none;
+  }
+
+  .masthead .logo span { color: var(--rouge); }
+
+  .hero {
+    padding: 4.5rem 2.5rem 3rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rouge);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero .kicker::before {
+    content: '';
+    width: 30px;
+    height: 2px;
+    background: var(--rouge);
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 7.5vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rouge);
+  }
+
+  .hero .deck {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+    line-height: 1.45;
+    max-width: 760px;
+    color: var(--ink-soft);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero .meta {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--ink);
+    padding-top: 1.2rem;
+  }
+
+  .hero .meta span strong {
+    color: var(--ink);
+    display: block;
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+  }
+
+  /* ------- KEY NUMBERS ------- */
+  .keynumbers {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .keynumbers::before {
+    content: 'Cd';
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 22rem;
+    color: var(--rouge);
+    opacity: 0.08;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    font-style: italic;
+  }
+
+  .keynumbers-grid {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .keynum .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 0.6rem;
+  }
+
+  .keynum .value {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 4.5vw, 3.8rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--paper);
+    margin-bottom: 0.5rem;
+  }
+
+  .keynum .value sup {
+    font-size: 0.5em;
+    color: var(--rouge);
+    margin-left: 0.2em;
+  }
+
+  .keynum .desc {
+    font-size: 0.88rem;
+    color: rgba(243, 237, 226, 0.75);
+    line-height: 1.4;
+  }
+
+  /* ------- SECTIONS ------- */
+  .section {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem;
+  }
+
+  .section-title {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: baseline;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 1.5rem;
+  }
+
+  .section-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--rouge);
+    font-weight: 700;
+  }
+
+  .section-title h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .section-intro {
+    max-width: 750px;
+    margin-bottom: 3rem;
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  /* ------- TOXICITY CARD ------- */
+  .tox-banner {
+    background: var(--paper-deep);
+    border: 1px solid var(--ink);
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .tox-banner .left h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .tox-banner .cmr-tag {
+    display: inline-block;
+    background: var(--rouge);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    padding: 0.4rem 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .tox-banner .half-life {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--rouge);
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+
+  .tox-banner .right ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+
+  .tox-banner .right li {
+    padding-left: 1.2rem;
+    border-left: 3px solid var(--rouge);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .tox-banner .right li strong {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+    color: var(--ink);
+  }
+
+  /* ------- SOURCES (donut idea) ------- */
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .source-card {
+    background: var(--paper-deep);
+    border: 1px solid var(--ink);
+    padding: 1.6rem;
+    transition: transform 0.25s ease;
+    position: relative;
+  }
+
+  .source-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .source-card .pop {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rouge);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .source-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .source-card .bar {
+    height: 8px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    margin: 1rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .source-card .bar-fill {
+    height: 100%;
+    background: var(--rouge);
+    transition: width 1s ease;
+  }
+
+  .source-card .bar-fill.alim { background: var(--rouge); }
+  .source-card .bar-fill.tabac { background: var(--ink); }
+  .source-card .bar-fill.minor { background: var(--ocre); }
+
+  .source-card .pct {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.03em;
+  }
+
+  .source-card .pct sup { font-size: 0.5em; color: var(--rouge); margin-left: 0.1em; }
+
+  .source-card p {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* ------- COUNTRY COMPARISON ------- */
+  .country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+    margin: 2.5rem 0;
+    border: 2px solid var(--ink);
+  }
+
+  .country-card {
+    padding: 1.8rem 1.4rem;
+    border-right: 1px solid var(--ink);
+    background: var(--paper-deep);
+    position: relative;
+    text-align: center;
+  }
+
+  .country-card:last-child { border-right: none; }
+  .country-card.france { background: var(--rouge); color: var(--paper); }
+
+  .country-card .flag-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+
+  .country-card.france .flag-block { color: var(--ocre); }
+
+  .country-card .multiplier {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 4rem;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin: 0.3rem 0;
+  }
+
+  .country-card.france .multiplier { color: var(--paper); }
+  .country-card .multiplier sup {
+    font-size: 0.35em;
+    font-weight: 700;
+    margin-left: 0.1em;
+    color: var(--rouge);
+  }
+  .country-card.france .multiplier sup { color: var(--ocre); }
+
+  .country-card .label {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    margin-top: 0.4rem;
+  }
+
+  .country-card.france .label { font-style: normal; font-weight: 600; }
+
+  /* Causes block */
+  .causes-block {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2.5rem 0 0;
+  }
+
+  .cause {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 1.8rem 1.5rem;
+    position: relative;
+  }
+
+  .cause .cause-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--rouge);
+    margin-bottom: 0.6rem;
+  }
+
+  .cause h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8rem;
+  }
+
+  .cause p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  .cause .stat {
+    display: block;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--rouge);
+    font-size: 0.85rem;
+  }
+
+  /* Pasta question block */
+  .pasta-q {
+    margin-top: 3rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2.5rem;
+    border-left: 6px solid var(--ocre);
+  }
+
+  .pasta-q .q-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+
+  .pasta-q h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+
+  .pasta-q h3 em { font-style: italic; color: var(--ocre); }
+
+  .pasta-q .answer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .pasta-q .answer-col h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .pasta-q .answer-col.no h5 { color: #ff6b6b; }
+  .pasta-q .answer-col.maybe h5 { color: var(--ocre); }
+
+  .pasta-q .answer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .pasta-q .answer-col li {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    padding-left: 1.3rem;
+    position: relative;
+  }
+
+  .pasta-q .answer-col.no li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    color: #ff6b6b;
+    font-weight: 700;
+  }
+
+  .pasta-q .answer-col.maybe li::before {
+    content: '~';
+    position: absolute;
+    left: 0;
+    color: var(--ocre);
+    font-weight: 700;
+    font-family: 'Fraunces', serif;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  .pasta-q .quote-italian {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(243, 237, 226, 0.3);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: rgba(243, 237, 226, 0.85);
+  }
+
+  .pasta-q .quote-italian .src {
+    display: block;
+    margin-top: 0.6rem;
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ocre);
+  }
+
+  @media (max-width: 768px) {
+    .pasta-q .answer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .pasta-q { padding: 1.8rem 1.5rem; }
+    .country-card { border-right: none; border-bottom: 1px solid var(--ink); }
+    .country-card:last-child { border-bottom: none; }
+  }
+
+  /* ------- AGE TABLE ------- */
+  .age-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+  }
+
+  table.age {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  table.age thead th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.9rem 0.9rem;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  table.age tbody td {
+    padding: 0.9rem;
+    border-bottom: 1px solid var(--paper-deep);
+    vertical-align: middle;
+  }
+
+  table.age tbody tr:hover { background: var(--paper-deep); }
+
+  table.age .age-label {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  table.age .pct-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  table.age .pct-bar {
+    position: relative;
+    height: 24px;
+    background: var(--paper-deep);
+    border-radius: 0;
+    overflow: hidden;
+    border: 1px solid var(--ink);
+  }
+  table.age .pct-bar-fill {
+    height: 100%;
+    background: var(--rouge);
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.78rem;
+  }
+  table.age tr.smoker .pct-bar-fill { background: var(--ink); }
+
+  table.age .contrib {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  /* ------- CALLOUT ------- */
+  .callout {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem;
+    margin: 4rem auto;
+    max-width: 1100px;
+    position: relative;
+    border: 1px solid var(--ink);
+  }
+
+  .callout::before {
+    content: '“';
+    position: absolute;
+    top: -2.5rem;
+    left: 1.5rem;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 8rem;
+    color: var(--rouge);
+    line-height: 1;
+  }
+
+  .callout p {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+    line-height: 1.45;
+    font-weight: 400;
+  }
+
+  .callout p em { color: var(--ocre); font-style: italic; }
+
+  .callout .source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-top: 1.5rem;
+    display: block;
+  }
+
+  /* ------- TWO-COLUMN RECOMMENDATIONS ------- */
+  .reco-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 2rem;
+    border: 2px solid var(--ink);
+  }
+
+  .reco-col {
+    padding: 2.5rem;
+    position: relative;
+  }
+
+  .reco-col.individual {
+    background: var(--paper-deep);
+    border-right: 2px solid var(--ink);
+  }
+
+  .reco-col.policy {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .reco-col .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+
+  .reco-col.individual .header-tag { color: var(--rouge); }
+  .reco-col.policy .header-tag { color: var(--ocre); }
+
+  .reco-col h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+
+  .reco-col h3 em {
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .reco-col .lede {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed currentColor;
+    opacity: 0.85;
+  }
+
+  .reco-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .reco-col li {
+    padding-left: 1.8rem;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .reco-col li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+
+  .reco-col.individual li::before { color: var(--rouge); }
+  .reco-col.policy li::before { color: var(--ocre); }
+
+  .reco-col li strong {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .reco-col.individual li strong { color: var(--ink); }
+  .reco-col.policy li strong { color: var(--paper); }
+
+  .reco-col li .small {
+    font-size: 0.82rem;
+    opacity: 0.75;
+    margin-top: 0.3rem;
+    display: block;
+    font-style: italic;
+  }
+
+  /* ------- POLICY LEVERS ------- */
+  .levers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 0;
+    margin-top: 3rem;
+    border: 2px solid var(--ink);
+  }
+
+  .lever {
+    border-right: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 2rem 1.5rem;
+    background: var(--paper);
+    position: relative;
+  }
+
+  .lever:last-child { border-right: none; }
+
+  .lever .lever-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 5rem;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--rouge);
+    opacity: 0.18;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+  }
+
+  .lever .lever-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    background: var(--ink);
+    color: var(--paper);
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .lever .lever-time.short { background: var(--rouge); }
+  .lever .lever-time.med { background: var(--ocre); color: var(--ink); }
+  .lever .lever-time.continuous { background: var(--olive); }
+
+  .lever h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .lever p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    position: relative;
+    z-index: 2;
+  }
+
+  .lever .key-fig {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--rouge);
+    font-size: 0.95rem;
+    margin-top: 0.8rem;
+    display: block;
+  }
+
+  /* ------- FOOD CONTRIBUTORS ------- */
+  .food-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .food-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 0.9rem 1.2rem;
+    background: var(--paper-deep);
+    border-left: 4px solid var(--rouge);
+    transition: transform 0.2s ease;
+  }
+
+  .food-row:hover {
+    transform: translateX(4px);
+  }
+
+  .food-row .age-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rouge);
+    font-weight: 700;
+  }
+
+  .food-row .food {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .food-row .pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 0.95rem;
+  }
+
+  /* ------- FOOTER ------- */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem 2.5rem;
+    margin-top: 5rem;
+  }
+
+  footer .footer-grid {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+  }
+
+  footer h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 1rem;
+  }
+
+  footer a {
+    color: var(--paper);
+    text-decoration: underline;
+    text-decoration-color: var(--rouge);
+    text-underline-offset: 3px;
+  }
+
+  footer .colophon {
+    font-family: 'Fraunces', serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(243, 237, 226, 0.7);
+  }
+
+  /* ------- MOBILE ------- */
+  @media (max-width: 900px) {
+    .reco-split { grid-template-columns: 1fr; }
+    .reco-col.individual { border-right: none; border-bottom: 2px solid var(--ink); }
+    .tox-banner { grid-template-columns: 1fr; gap: 1.5rem; }
+    .tox-banner .right ul { grid-template-columns: 1fr; }
+    .food-row { grid-template-columns: 1fr; gap: 0.4rem; }
+    .lever { border-right: none; }
+  }
+
+  @media (max-width: 768px) {
+    .masthead { padding: 0.9rem 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .keynumbers { padding: 2.5rem 1.2rem; }
+    .keynumbers::before { font-size: 10rem; }
+    .section { padding: 3rem 1.2rem; }
+    .callout { padding: 2rem 1.5rem; margin: 3rem 1.2rem; }
+    .callout::before { font-size: 5rem; top: -1.5rem; }
+    .reco-col { padding: 1.8rem; }
+    .reco-col h3 { font-size: 1.7rem; }
+    footer .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .tox-banner { padding: 1.5rem; }
+  }
+
+  /* anim */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .keynum { animation: fadeUp 0.7s ease both; }
+  .keynum:nth-child(1) { animation-delay: 0.1s; }
+  .keynum:nth-child(2) { animation-delay: 0.2s; }
+  .keynum:nth-child(3) { animation-delay: 0.3s; }
+  .keynum:nth-child(4) { animation-delay: 0.4s; }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="title-block">
+      <span class="logo">Cd<span>·48</span></span>
+      <span>Le métal qui s'accumule</span>
+    </div>
+    <span>ANSES · Février 2026 · Saisine 2023-AUTO-0150</span>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">Enquête sanitaire — Approche d'exposition agrégée</div>
+    <h1>Le <em>cadmium</em>,<br>une dette<br>silencieuse</h1>
+    <p class="deck">
+      Cancérogène, mutagène, reprotoxique. Stocké dans l'organisme pendant 10 à 30 ans. Près d'un Français adulte sur deux dépasse aujourd'hui le seuil critique d'imprégnation. L'agence sanitaire a passé deux ans à modéliser, source par source, comment ce métal circule depuis les sols jusqu'à nos reins — pour identifier où agir, et qui doit agir.
+    </p>
+    <div class="meta">
+      <span>Demi-vie biologique <strong>10 — 30 ans</strong></span>
+      <span>Classification <strong>CMR (catégorie 1B)</strong></span>
+      <span>Source principale (non-fumeurs) <strong>Alimentation 98 %</strong></span>
+      <span>Coût d'inaction projeté en 2040 <strong>jusqu'à 2,6 milliards d'€</strong></span>
+    </div>
+  </section>
+
+  <!-- KEY NUMBERS -->
+  <section class="keynumbers">
+    <div class="keynumbers-grid">
+      <div class="keynum">
+        <div class="label">Adultes français (Esteban)</div>
+        <div class="value">47,6 %</div>
+        <div class="desc">dépassent la concentration critique de cadmium urinaire de 0,5 µg/g de créatinine.</div>
+      </div>
+      <div class="keynum">
+        <div class="label">Enfants 25-36 mois</div>
+        <div class="value">100 %</div>
+        <div class="desc">dépassent la valeur repère biologique pour leur âge — la totalité de la classe d'âge.</div>
+      </div>
+      <div class="keynum">
+        <div class="label">Ostéoporose chez la femme &gt; 55 ans</div>
+        <div class="value">23 %</div>
+        <div class="desc">des cas attribuables à l'exposition au cadmium en France (projet HBM4EU).</div>
+      </div>
+      <div class="keynum">
+        <div class="label">Imprégnation prénatale</div>
+        <div class="value">40 %</div>
+        <div class="desc">de l'imprégnation observée chez le nourrisson durant ses trois premiers mois de vie.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1 : TOXICITÉ -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 01</span>
+      <h2>Pourquoi le cadmium est un cas à part</h2>
+    </div>
+
+    <p class="section-intro">
+      Contrairement à la plupart des contaminants alimentaires que l'organisme évacue rapidement, le cadmium s'accumule. Une exposition modérée mais quotidienne, étalée sur des décennies, finit par produire les mêmes effets qu'une intoxication aigüe. C'est ce mécanisme qui rend l'enjeu sanitaire particulièrement difficile à saisir.
+    </p>
+
+    <div class="tox-banner">
+      <div class="left">
+        <span class="cmr-tag">CMR · CIRC groupe 1</span>
+        <h3>Élément trace métallique bioaccumulable</h3>
+        <p style="font-size: 0.95rem; line-height: 1.5; color: var(--ink-soft);">
+          Présent naturellement dans les sols, l'air, les eaux. Ses apports sont renforcés par les activités agricoles et industrielles. Pénètre dans les végétaux par les racines, entre dans la chaîne alimentaire.
+        </p>
+        <p class="half-life">Demi-vie biologique : 10 à 30 ans dans l'organisme.</p>
+      </div>
+      <div class="right">
+        <ul>
+          <li><strong>Reins</strong>Néphrotoxique. Atteinte tubulaire à dose cumulée, pouvant évoluer vers une insuffisance rénale.</li>
+          <li><strong>Os</strong>Effet critique retenu. Déminéralisation, ostéoporose, augmentation du risque de fractures.</li>
+          <li><strong>Système cardio-vasculaire</strong>Effets observés à des doses comparables à celles touchant les os.</li>
+          <li><strong>Développement</strong>Effets neuro-développementaux et staturo-pondéraux observés en exposition prénatale.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALLOUT 1 -->
+  <section class="callout">
+    <p>
+      Les résultats du modèle sous-estiment systématiquement les valeurs mesurées chez les non-fumeurs et les enfants. Quand les <em>cadmiuries prédites dépassent les seuils sanitaires</em>, les vraies les dépassent davantage encore. La situation est plus préoccupante que ne le suggèrent les chiffres.
+    </p>
+    <span class="source">Note méthodologique · ANSES 2026, comparaison avec l'étude Esteban</span>
+  </section>
+
+  <!-- SECTION 2 : SOURCES -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 02</span>
+      <h2>D'où vient le cadmium qui nous imprègne</h2>
+    </div>
+
+    <p class="section-intro">
+      L'agence a agrégé toutes les sources et toutes les voies d'exposition — alimentation, eau, air, sols, poussières, tabac, cosmétiques. Verdict : pour la quasi-totalité de la population non-fumeuse, l'alimentation explique presque tout. Pour les fumeurs, le tabac s'ajoute massivement à partir de la quarantaine.
+    </p>
+
+    <div class="sources-grid">
+
+      <div class="source-card">
+        <div class="pop">Population non-fumeuse · adulte</div>
+        <h3>Alimentation</h3>
+        <div class="pct">98 %<sup>•</sup></div>
+        <div class="bar"><div class="bar-fill alim" style="width: 98%;"></div></div>
+        <p>Quasi-totalité de l'exposition. Les autres sources combinées (poussières, sol, air, cosmétiques) contribuent à moins de 2 %.</p>
+      </div>
+
+      <div class="source-card">
+        <div class="pop">Population fumeuse · 45-64 ans</div>
+        <h3>Tabac</h3>
+        <div class="pct">jusqu'à 43 %</div>
+        <div class="bar"><div class="bar-fill tabac" style="width: 43%;"></div></div>
+        <p>La cadmiurie d'un fumeur après 45 ans est presque doublée par rapport à un non-fumeur. La plante de tabac concentre fortement le cadmium dans ses feuilles.</p>
+      </div>
+
+      <div class="source-card">
+        <div class="pop">Nourrissons · 0-3 mois</div>
+        <h3>Imprégnation prénatale</h3>
+        <div class="pct">40 %</div>
+        <div class="bar"><div class="bar-fill minor" style="width: 40%;"></div></div>
+        <p>Transmise par la mère via le sang du cordon ombilical. La barrière placentaire ne bloque pas tout. Fenêtre de sensibilité critique pour le développement.</p>
+      </div>
+
+      <div class="source-card">
+        <div class="pop">Toutes populations · agrégé</div>
+        <h3>Air, sols, cosmétiques</h3>
+        <div class="pct">&lt; 2 %</div>
+        <div class="bar"><div class="bar-fill minor" style="width: 2%;"></div></div>
+        <p>Émissions industrielles en baisse de 48 % (air) et 69 % (eau) en dix ans en France. Sources mineures pour la population générale, hors sites pollués.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2bis : ANOMALIE FRANÇAISE -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 02 bis</span>
+      <h2>La France, anomalie européenne</h2>
+    </div>
+
+    <p class="section-intro">
+      Le cadmium n'est pas un problème mondial uniforme. C'est, pour partie, un problème français. Les Français adultes sont aujourd'hui parmi les plus imprégnés des pays comparables — et l'écart avec l'Allemagne, l'Italie ou les États-Unis est massif. Trois facteurs cumulés expliquent cette anomalie : des engrais plus chargés en cadmium, des sols agricoles plus anciennement contaminés, et des habitudes alimentaires qui font la part belle aux denrées qui le concentrent.
+    </p>
+
+    <!-- Comparison cards -->
+    <div class="country-grid">
+      <div class="country-card france">
+        <div class="flag-block">France · adultes</div>
+        <div class="multiplier">×1<sup>réf</sup></div>
+        <div class="label">Niveau de référence : 47,6 % au-dessus du seuil critique</div>
+      </div>
+      <div class="country-card">
+        <div class="flag-block">vs Italie · adultes</div>
+        <div class="multiplier">÷2</div>
+        <div class="label">Imprégnation française deux fois supérieure aux Italiens</div>
+      </div>
+      <div class="country-card">
+        <div class="flag-block">vs États-Unis · adultes</div>
+        <div class="multiplier">÷3</div>
+        <div class="label">Imprégnation française trois fois supérieure aux Américains</div>
+      </div>
+      <div class="country-card">
+        <div class="flag-block">vs Allemagne · enfants</div>
+        <div class="multiplier">÷4</div>
+        <div class="label">Imprégnation des enfants français quatre fois supérieure</div>
+      </div>
+    </div>
+
+    <p style="font-size: 0.95rem; color: var(--ink-soft); margin-bottom: 2.5rem; max-width: 800px; line-height: 1.55;">
+      Seules la <strong>Pologne</strong>, l'<strong>Espagne</strong> et le <strong>Portugal</strong> présentent des niveaux de contamination comparables, voire supérieurs, à la France. Le reste de l'Europe — Belgique, Angleterre, Allemagne, Italie — se situe nettement en dessous.
+    </p>
+
+    <!-- Causes -->
+    <h3 style="font-family: 'Fraunces', serif; font-weight: 800; font-size: clamp(1.4rem, 2vw, 1.8rem); letter-spacing: -0.02em; margin-bottom: 0.8rem;">
+      Pourquoi cet écart ?
+    </h3>
+
+    <div class="causes-block">
+      <div class="cause">
+        <div class="cause-num">CAUSE N°1</div>
+        <h4>Des engrais phosphatés plus chargés en cadmium</h4>
+        <p>
+          La France importe l'essentiel de ses phosphates du Maroc, dont les gisements sédimentaires sont parmi les plus riches en cadmium au monde (jusqu'à 73 mg/kg). Les autres pays européens diversifient davantage leurs approvisionnements (Russie, Afrique du Sud, gisements ignés moins contaminés).
+        </p>
+        <span class="stat">Engrais français : ×1,76 vs moyenne UE · ×2 vs Allemagne · ×3 vs Belgique</span>
+      </div>
+
+      <div class="cause">
+        <div class="cause-num">CAUSE N°2</div>
+        <h4>Une réglementation française plus permissive</h4>
+        <p>
+          La limite européenne pour le cadmium dans les engrais minéraux phosphatés est fixée à 60 mg/kg P₂O₅ depuis 2022. La Finlande et le Danemark appliquent déjà des seuils plus stricts (20 à 48 mg/kg). En France, la norme nationale autorise jusqu'à 90 mg/kg — soit 4,5 fois la recommandation sanitaire de l'ANSES.
+        </p>
+        <span class="stat">UE : 60 mg/kg · France (norme nationale) : jusqu'à 90 mg/kg · ANSES : 20 mg/kg</span>
+      </div>
+
+      <div class="cause">
+        <div class="cause-num">CAUSE N°3</div>
+        <h4>Des habitudes alimentaires qui amplifient l'effet</h4>
+        <p>
+          Les Français consomment en moyenne plus de pain, plus de produits céréaliers et plus de pommes de terre que la plupart des autres Européens. Or ce sont précisément les denrées qui concentrent le cadmium au quotidien. Le pain quotidien à la française n'a pas d'équivalent en Italie ou aux États-Unis.
+        </p>
+        <span class="stat">Pain & céréales : 13–21 % de l'exposition adulte · pommes de terre : 12–25 %</span>
+      </div>
+
+      <div class="cause">
+        <div class="cause-num">CAUSE N°4</div>
+        <h4>Décennies d'accumulation dans les sols</h4>
+        <p>
+          Le cadmium ne quitte pas le sol agricole une fois apporté. Des décennies d'épandage d'engrais cadmiés sur des sols français ont enrichi cumulativement les terres agricoles. Une régénération des sols, à supposer qu'on cesse les apports, exigerait plusieurs décennies.
+        </p>
+        <span class="stat">Demi-vie biologique du Cd dans l'organisme : 10–30 ans</span>
+      </div>
+    </div>
+
+    <!-- Pasta question block -->
+    <div class="pasta-q">
+      <div class="q-tag">Question concrète du consommateur</div>
+      <h3>Acheter des pâtes <em>italiennes</em> ou des pommes de terre <em>espagnoles</em>, est-ce que ça aide ?</h3>
+
+      <div class="answer-grid">
+        <div class="answer-col no">
+          <h5>Pourquoi ça ne marche pas (ou très peu)</h5>
+          <ul>
+            <li><strong>Mêmes seuils réglementaires partout en Europe.</strong> Les teneurs maximales en cadmium dans les pâtes, le blé, les pommes de terre sont identiques de Lille à Palerme (Règlement UE 2023/915).</li>
+            <li><strong>L'Espagne et le Portugal sont eux-mêmes parmi les pays les plus contaminés</strong> — y acheter ses féculents revient à déplacer le problème, voire l'aggraver.</li>
+            <li><strong>L'origine affichée n'est pas un gage de qualité.</strong> Une pâte « italienne » industrielle peut être faite avec du blé dur importé du Canada, puis simplement séchée en Italie.</li>
+            <li><strong>Le pain quotidien français reste la première source d'exposition adulte.</strong> Difficile de le sourcer ailleurs.</li>
+          </ul>
+        </div>
+
+        <div class="answer-col maybe">
+          <h5>Ce qui peut avoir un sens limité</h5>
+          <ul>
+            <li><strong>Diversifier les origines</strong> — recommandation ANSES — pour ne pas cumuler une exposition à une zone particulièrement contaminée. Effet à la marge.</li>
+            <li><strong>Pâtes artisanales italiennes de filière maîtrisée :</strong> certains producteurs annoncent des teneurs autour de 0,010 mg/kg, soit 15 fois en dessous des seuils. Mais c'est une affirmation commerciale qui se vérifie au cas par cas — pas une garantie liée à l'origine.</li>
+            <li><strong>Privilégier les filières où le blé est tracé depuis le champ</strong>, plutôt que les marques industrielles dont la matière première peut venir de partout.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quote-italian">
+        « Quant aux pâtes italiennes, les teneurs maximales en cadmium sont les mêmes partout en Europe. La priorité est d'agir à la source pour réduire la contamination des sols agricoles. »
+        <span class="src">Géraldine Carne, ANSES — réponses sur franceinfo, 2026</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SECTION 3 : DÉPASSEMENTS PAR ÂGE -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 03</span>
+      <h2>Qui dépasse les seuils, et de combien</h2>
+    </div>
+
+    <p class="section-intro">
+      L'ANSES a calculé pour chaque tranche d'âge la valeur repère biologique (VRB) à ne pas dépasser pour rester sous le seuil sanitaire à 60 ans. Les modèles de 2025 montrent des dépassements à toutes les tranches d'âge — y compris les plus jeunes.
+    </p>
+
+    <div class="age-table-wrap">
+      <table class="age">
+        <thead>
+          <tr>
+            <th>Tranche d'âge</th>
+            <th>% dépassement de la VRB</th>
+            <th>Distribution</th>
+            <th>Principaux contributeurs alimentaires</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="age-label">0 — 3 mois</td>
+            <td class="pct-cell">33 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 33%;">33%</div></td>
+            <td class="contrib">Préparations infantiles 1<sup>er</sup> âge (76%) + imprégnation prénatale</td>
+          </tr>
+          <tr>
+            <td class="age-label">4 — 6 mois</td>
+            <td class="pct-cell">37 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 37%;">37%</div></td>
+            <td class="contrib">Préparations infantiles, céréales infantiles</td>
+          </tr>
+          <tr>
+            <td class="age-label">7 — 12 mois</td>
+            <td class="pct-cell">68 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 68%;">68%</div></td>
+            <td class="contrib">Pots de légumes (32%), préparations & céréales infantiles</td>
+          </tr>
+          <tr>
+            <td class="age-label">13 — 24 mois</td>
+            <td class="pct-cell">97 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 97%;">97%</div></td>
+            <td class="contrib">Pots légumes-viande (23%), légumes (20%), pommes de terre (14%)</td>
+          </tr>
+          <tr>
+            <td class="age-label">25 — 36 mois</td>
+            <td class="pct-cell">100 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 100%;">100%</div></td>
+            <td class="contrib">Pommes de terre, légumes, céréales raffinées</td>
+          </tr>
+          <tr>
+            <td class="age-label">3 — 5 ans</td>
+            <td class="pct-cell">92 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 92%;">92%</div></td>
+            <td class="contrib">Pommes de terre (20-25%), légumes, pâtes/riz/blé raffinés</td>
+          </tr>
+          <tr>
+            <td class="age-label">6 — 10 ans</td>
+            <td class="pct-cell">94 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 94%;">94%</div></td>
+            <td class="contrib">Pommes de terre, viennoiseries/biscuits (11%), pain</td>
+          </tr>
+          <tr>
+            <td class="age-label">11 — 17 ans</td>
+            <td class="pct-cell">72 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 72%;">72%</div></td>
+            <td class="contrib">Pain, pommes de terre, pâtisseries</td>
+          </tr>
+          <tr>
+            <td class="age-label">18 — 44 ans (non-fumeurs)</td>
+            <td class="pct-cell">29 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 29%;">29%</div></td>
+            <td class="contrib">Pain (13-21%), pommes de terre, légumes, céréales</td>
+          </tr>
+          <tr class="smoker">
+            <td class="age-label">18 — 44 ans (fumeurs)</td>
+            <td class="pct-cell">71 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 71%;">71%</div></td>
+            <td class="contrib">Alimentation + tabac (effet aggravant net)</td>
+          </tr>
+          <tr>
+            <td class="age-label">45 — 64 ans (non-fumeurs)</td>
+            <td class="pct-cell">42 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 42%;">42%</div></td>
+            <td class="contrib">Pain (21%), pommes de terre, légumes</td>
+          </tr>
+          <tr class="smoker">
+            <td class="age-label">45 — 64 ans (fumeurs)</td>
+            <td class="pct-cell">76 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 76%;">76%</div></td>
+            <td class="contrib">Tabac contribue jusqu'à 43 % de l'imprégnation</td>
+          </tr>
+          <tr>
+            <td class="age-label">65 — 79 ans</td>
+            <td class="pct-cell">54 %</td>
+            <td class="pct-bar"><div class="pct-bar-fill" style="width: 54%;">54%</div></td>
+            <td class="contrib">Pain (20%), pommes de terre, légumes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 4 : ALIMENTS CONTRIBUTEURS -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 04</span>
+      <h2>Les aliments en première ligne</h2>
+    </div>
+
+    <p class="section-intro">
+      Le cadmium concerne d'abord les denrées du régime de base : pain, pommes de terre, légumes. Très consommées, contaminées par les sols agricoles, elles cumulent l'exposition. Note importante : la concentration en cadmium a <em>augmenté</em> pour 28 % des aliments entre l'EAT2 et l'EAT3 — d'un facteur 3,5 pour les céréales du petit-déjeuner.
+    </p>
+
+    <div class="food-list">
+      <div class="food-row">
+        <span class="age-tag">Adultes 18-79 ans</span>
+        <span class="food">Pain & produits de panification sèche raffinés</span>
+        <span class="pct">13 — 21 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">Tous âges 3+</span>
+        <span class="food">Pommes de terre & autres tubercules</span>
+        <span class="pct">12 — 25 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">Tous âges 3+</span>
+        <span class="food">Légumes</span>
+        <span class="pct">8 — 13 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">Tous âges 3+</span>
+        <span class="food">Pâtes, riz, blé & autres céréales raffinés</span>
+        <span class="pct">7 — 12 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">Enfants & adolescents</span>
+        <span class="food">Viennoiseries, pâtisseries, gâteaux & biscuits sucrés</span>
+        <span class="pct">5 — 11 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">0 — 7 mois</span>
+        <span class="food">Préparations infantiles 1<sup>er</sup> âge</span>
+        <span class="pct">76 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">7 — 12 mois</span>
+        <span class="food">Pots de légumes</span>
+        <span class="pct">32 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">13 — 24 mois</span>
+        <span class="food">Pots légumes-viande</span>
+        <span class="pct">23 %</span>
+      </div>
+      <div class="food-row">
+        <span class="age-tag">Forte concentration · faible consommation</span>
+        <span class="food">Crustacés & mollusques (notamment tortillon des bulots)</span>
+        <span class="pct">15 — 20 % chez les forts consommateurs</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALLOUT 2 - Critique des seuils -->
+  <section class="callout">
+    <p>
+      Les teneurs maximales réglementaires actuelles fixées pour le cadmium dans les denrées alimentaires ne sont <em>pas suffisamment protectrices pour la santé du consommateur</em>. Même quand elles sont respectées, une proportion de la population française dépasse la valeur toxicologique de référence.
+    </p>
+    <span class="source">Section 9.2.3 du rapport ANSES — recommandation de révision à la baisse des TM</span>
+  </section>
+
+  <!-- SECTION 5 : RECOMMANDATIONS — DEUX COLONNES -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 05</span>
+      <h2>Que faire — et qui doit agir ?</h2>
+    </div>
+
+    <p class="section-intro">
+      Le rapport est explicite : les principaux aliments contributeurs (pommes de terre, pain, légumes, céréales) sont <em>des denrées du régime alimentaire de base</em>. Demander aux consommateurs d'en réduire la consommation n'a pas de sens — ce sont les sources de contamination en amont qui doivent être traitées. Les leviers individuels sont limités. Les leviers collectifs sont déterminants.
+    </p>
+
+    <div class="reco-split">
+
+      <!-- COLONNE GAUCHE : GRAND PUBLIC -->
+      <div class="reco-col individual">
+        <div class="header-tag">Pour le grand public</div>
+        <h3>Ce que l'<em>individu</em> peut faire</h3>
+        <p class="lede">
+          La marge d'action individuelle est volontairement limitée par l'agence. Les contributeurs majeurs étant des aliments de base, l'ANSES précise qu'« il n'est pas pertinent de formuler des recommandations en termes de choix individuels et de fréquence de consommation des aliments concernés, qui seraient spécifiques au cadmium ».
+        </p>
+        <ul>
+          <li>
+            <strong>Diversifier les sources d'approvisionnement</strong>
+            Varier les origines pour éviter une exposition répétée au cadmium issu d'une même zone géographique ou d'un même fournisseur.
+            <span class="small">Recommandation explicite ANSES — effet à la marge. Acheter italien ou espagnol ne change pas grand-chose réglementairement (cf. § 02 bis).</span>
+          </li>
+          <li>
+            <strong>Suivre les repères PNNS</strong>
+            Une alimentation diversifiée selon les recommandations nutritionnelles existantes (réduction des produits sucrés à base de blé, équilibrage céréales/légumineuses) contribue à réduire l'exposition.
+          </li>
+          <li>
+            <strong>Ne pas consommer le tortillon des bulots</strong>
+            Le tortillon (partie noire) concentre nettement plus de cadmium que la chair. Recommandation officielle figurant dans le guide santé.gouv.fr.
+            <span class="small">Pour rappel, l'arrêté de 2008 limitant la pêche de bulots &gt; 70 mm a été abrogé en 2022.</span>
+          </li>
+          <li>
+            <strong>Femmes enceintes & jeunes enfants</strong>
+            Vigilance accrue : l'exposition prénatale explique jusqu'à 40 % de l'imprégnation des trois premiers mois de vie. Limiter certains seafoods particulièrement contaminés.
+          </li>
+          <li>
+            <strong>Tabac : ne pas commencer, arrêter, éviter le tabagisme passif</strong>
+            La cadmiurie des fumeurs est presque doublée à partir de 45 ans. C'est, parmi les actions individuelles, celle dont l'effet est le plus net sur l'imprégnation.
+            <span class="small">18 % des adultes français de 18-75 ans étaient fumeurs quotidiens en 2024.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- COLONNE DROITE : ACTION PUBLIQUE -->
+      <div class="reco-col policy">
+        <div class="header-tag">Pour l'action publique</div>
+        <h3>Là où se trouvent les <em>vrais</em> leviers</h3>
+        <p class="lede">
+          La contamination des denrées de base étant directement liée à la présence de cadmium dans les sols agricoles — issue principalement des matières fertilisantes — c'est en amont qu'il faut agir. Cinq cibles d'action prioritaires sont détaillées plus bas. Toutes relèvent de mesures structurelles, réglementaires et institutionnelles.
+        </p>
+        <ul>
+          <li>
+            <strong>Réduire les apports de cadmium aux sols agricoles</strong>
+            Application stricte d'un flux annuel ≤ 2 g Cd/ha/an, toutes matières fertilisantes confondues. Concentration ≤ 20 mg Cd/kg P₂O₅ dans les engrais minéraux phosphatés (vs limite UE actuelle de 60 mg).
+          </li>
+          <li>
+            <strong>Faire évoluer les pratiques agricoles</strong>
+            Caractériser le Cd des parcelles avant tout épandage. Promouvoir l'agriculture de précision, la fertilisation au plus près des besoins, les variétés moins accumulatrices, l'étiquetage obligatoire de la teneur en Cd.
+          </li>
+          <li>
+            <strong>Réviser à la baisse les teneurs maximales dans les aliments</strong>
+            Les TM réglementaires actuelles ne protègent pas suffisamment. Les abaisser pour les principaux contributeurs (pommes de terre, céréales raffinées, légumes) afin que leurs contributions conjointes ne fassent pas dépasser la VTR.
+          </li>
+          <li>
+            <strong>Renforcer le contrôle et la surveillance</strong>
+            Cibler les aliments les plus contributeurs, intégrer les sources diffuses (engrais, sludges, MAFOR), construire une base nationale des concentrations en Cd dans les fertilisants — qui n'existe pas aujourd'hui.
+          </li>
+          <li>
+            <strong>Renforcer la lutte anti-tabac</strong>
+            Inscrire la prévention de l'exposition au cadmium dans le Programme national de lutte contre le tabac (génération sans tabac à l'horizon 2032). Étudier — avec prudence vis-à-vis du marketing — l'opportunité d'une teneur réglementaire en Cd dans le tabac.
+          </li>
+          <li>
+            <strong>Combler le vide réglementaire sur les effluents d'élevage</strong>
+            Aucune réglementation actuelle ne fixe de teneur en Cd dans les effluents d'élevage épandus. Lacune identifiée explicitement par l'ANSES.
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 6 : LES 5 LEVIERS PRIORISÉS -->
+  <section class="section">
+    <div class="section-title">
+      <span class="num">§ 06</span>
+      <h2>Les cinq leviers prioritaires</h2>
+    </div>
+
+    <p class="section-intro">
+      L'ANSES priorise cinq cibles d'action selon trois temporalités — court terme, moyen terme, action continue. Toutes couvrent le continuum complet, depuis la source dans le sol jusqu'à l'aliment consommé. Le coût de l'inaction, partiellement chiffré (fardeau de l'ostéoporose chez les femmes &gt; 55 ans), pourrait atteindre 2,6 milliards d'€ d'ici 2040.
+    </p>
+
+    <div class="levers">
+
+      <div class="lever">
+        <div class="lever-num">1</div>
+        <span class="lever-time short">Court terme</span>
+        <h4>Agir sur les matières fertilisantes</h4>
+        <p>Abaisser la limite réglementaire en cadmium des engrais minéraux phosphatés. Tendre vers ≤ 1 mg Cd/kg de matière sèche dans les fertilisants organiques. Combler l'absence de réglementation des effluents d'élevage.</p>
+        <span class="key-fig">≤ 20 mg Cd/kg P₂O₅</span>
+      </div>
+
+      <div class="lever">
+        <div class="lever-num">2</div>
+        <span class="lever-time short">Court terme</span>
+        <h4>Faire évoluer les pratiques agricoles</h4>
+        <p>Étendre l'analyse de Cd des parcelles avant épandage. Promouvoir l'agriculture de précision, la remobilisation du phosphore du sol, les variétés moins accumulatrices (céréales, pommes de terre). Étiquetage obligatoire des fertilisants.</p>
+        <span class="key-fig">2 g Cd/ha/an max</span>
+      </div>
+
+      <div class="lever">
+        <div class="lever-num">3</div>
+        <span class="lever-time med">Moyen terme</span>
+        <h4>Réduire la contamination des aliments</h4>
+        <p>Réviser à la baisse les teneurs maximales en cadmium dans les aliments fortement contributeurs. Le niveau d'ambition dépend en cascade de la diminution des apports en amont (leviers 1 et 2).</p>
+        <span class="key-fig">Règlement UE 2023/915</span>
+      </div>
+
+      <div class="lever">
+        <div class="lever-num">4</div>
+        <span class="lever-time continuous">Action continue</span>
+        <h4>Améliorer contrôle & surveillance</h4>
+        <p>Tout au long de la chaîne, des intrants agricoles aux aliments consommés. Renforcer le ciblage sur les aliments contributeurs majeurs. Intégrer le Cd dans la future directive européenne sur la santé des sols.</p>
+        <span class="key-fig">Pas de base de données Cd des fertilisants en France</span>
+      </div>
+
+      <div class="lever">
+        <div class="lever-num">5</div>
+        <span class="lever-time continuous">Action continue</span>
+        <h4>Réduire l'exposition tabagique</h4>
+        <p>Renforcer la lutte contre le tabagisme actif et passif. Intégrer la problématique cadmium dans le PNLT. Étudier (avec prudence) l'opportunité d'une teneur réglementaire en Cd dans le tabac, sans permettre de marketing « moins dangereux ».</p>
+        <span class="key-fig">Génération sans tabac · 2032</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CALLOUT FINAL -->
+  <section class="callout">
+    <p>
+      « Ces aliments sont à la fois très consommés et constituent pour une partie de la population des denrées du régime alimentaire de base. La réduction de l'exposition dès le plus jeune âge repose <em>avant tout sur des actions visant à réduire les sources de contamination</em>, la contamination des denrées étant directement liée à la présence de cadmium dans les sols. »
+    </p>
+    <span class="source">ANSES — Section 3.6.3 du rapport, justification du choix des leviers</span>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>À propos</h4>
+        <p class="colophon">Synthèse réalisée à partir du rapport ANSES « Priorisation des leviers d'action pour réduire l'imprégnation de la population française au cadmium selon une approche d'exposition agrégée », février 2026, saisine 2023-AUTO-0150. La modélisation s'appuie sur l'étude Esteban (Santé publique France, 2014-2016) et les EAT successives.</p>
+      </div>
+      <div>
+        <h4>Source</h4>
+        <p style="font-size: 0.9rem; line-height: 1.5;">
+          <a href="https://www.anses.fr/system/files/ERCA-2023-AUTO-0150-RA.pdf" target="_blank" rel="noopener">Rapport intégral PDF</a><br><br>
+          <a href="https://www.anses.fr/" target="_blank" rel="noopener">anses.fr</a>
+        </p>
+      </div>
+      <div>
+        <h4>Voir aussi</h4>
+        <p style="font-size: 0.9rem; line-height: 1.5; color: rgba(243, 237, 226, 0.7);">L'EAT3 (janvier 2026) couvre l'ensemble des contaminants alimentaires en France. Le cadmium y est confirmé comme l'un des cinq polluants pour lesquels un risque sanitaire est identifié.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

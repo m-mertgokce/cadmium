@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votre exposition aux polluants — Calculette personnelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ede2;
+    --paper-deep: #ebe3d2;
+    --paper-deeper: #ddd2bb;
+    --ink: #1a1612;
+    --ink-soft: #4a3f33;
+    --rouge: #b22222;
+    --rouge-deep: #7a1717;
+    --ocre: #c8852b;
+    --olive: #6a7a3f;
+    --bleu: #2d4a6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.55;
+    font-size: 16px;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(178, 34, 34, 0.025) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(106, 122, 63, 0.03) 0%, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
+  .container { position: relative; z-index: 2; }
+
+  /* MASTHEAD */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .masthead .title-block {
+    display: flex;
+    gap: 1.8rem;
+    align-items: baseline;
+  }
+
+  .masthead .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-transform: none;
+  }
+
+  .masthead .logo span { color: var(--rouge); }
+
+  /* HERO */
+  .hero {
+    padding: 4rem 2.5rem 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rouge);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero .kicker::before {
+    content: '';
+    width: 30px;
+    height: 2px;
+    background: var(--rouge);
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rouge);
+  }
+
+  .hero .deck {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+    line-height: 1.5;
+    max-width: 800px;
+    color: var(--ink-soft);
+    margin-bottom: 2rem;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: var(--paper-deep);
+    border-left: 4px solid var(--ocre);
+    padding: 1.2rem 1.5rem;
+    margin-top: 1.5rem;
+    max-width: 900px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .disclaimer strong {
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--ocre);
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2.5rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* SECTION TITLES */
+  .section-title {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.2rem;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--ink);
+  }
+  .section-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--rouge);
+    font-weight: 700;
+  }
+  .section-title h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  /* INPUT PANEL */
+  .panel {
+    background: var(--paper-deep);
+    border: 1px solid var(--ink);
+    padding: 1.8rem;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+
+  /* PROFILE */
+  .profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed var(--ink-soft);
+  }
+  .field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 0.6rem 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    border-radius: 0;
+  }
+  .field input:focus, .field select:focus {
+    outline: 2px solid var(--rouge);
+    outline-offset: -2px;
+  }
+
+  /* FOOD CATEGORIES */
+  .food-search {
+    margin-bottom: 1rem;
+  }
+  .food-search input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+  }
+
+  .food-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .cat-btn {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    transition: all 0.15s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cat-btn:hover { background: var(--ocre); color: var(--ink); }
+  .cat-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .cat-btn .arrow { font-family: 'Fraunces', serif; font-weight: 700; }
+
+  /* FOOD LIST */
+  .food-list-wrap {
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .food-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--paper-deeper);
+    transition: background 0.15s ease;
+  }
+  .food-row:hover { background: var(--paper-deep); }
+  .food-row:last-child { border-bottom: none; }
+  .food-row.hidden { display: none; }
+
+  .food-name {
+    font-size: 0.88rem;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .food-name .sub {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 0.15rem;
+  }
+  .food-row .qty-input {
+    width: 70px;
+    padding: 0.4rem;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    text-align: right;
+  }
+  .food-row .unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    min-width: 22px;
+  }
+
+  /* ACTIONS */
+  .actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--ink-soft);
+  }
+  .btn {
+    flex: 1;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 700;
+    transition: all 0.15s ease;
+  }
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn-primary { background: var(--rouge); color: var(--paper); border-color: var(--rouge); }
+  .btn-primary:hover { background: var(--rouge-deep); border-color: var(--rouge-deep); }
+
+  /* PRESETS */
+  .presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px dashed var(--ink-soft);
+  }
+  .preset-btn {
+    background: var(--paper);
+    border: 1px solid var(--ocre);
+    color: var(--ink);
+    padding: 0.5rem;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .preset-btn:hover { background: var(--ocre); }
+
+  /* RESULTS PANEL */
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .day-overview {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .day-overview h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    line-height: 1.05;
+    margin-bottom: 0.4rem;
+  }
+  .day-overview h3 em { color: var(--ocre); font-style: italic; font-weight: 400; }
+  .day-overview .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 1.5rem;
+  }
+
+  /* POLLUTANT GRID */
+  .pollutant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ink-soft);
+    margin-top: 1rem;
+  }
+  .poll-card {
+    background: var(--ink);
+    padding: 1.2rem;
+    position: relative;
+  }
+  .poll-card .poll-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+  .poll-card .poll-amount {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--paper);
+    margin-bottom: 0.3rem;
+  }
+  .poll-card .poll-amount sup {
+    font-size: 0.5em;
+    color: var(--ocre);
+    margin-left: 0.15em;
+  }
+  .poll-card .poll-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--paper);
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+  }
+  .poll-card .poll-pct.danger { color: #ff8080; }
+  .poll-card .poll-pct.warn { color: var(--ocre); }
+  .poll-card .poll-pct.ok { color: #8fb46a; }
+
+  .poll-bar {
+    height: 8px;
+    background: rgba(243, 237, 226, 0.15);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+  }
+  .poll-bar-fill {
+    height: 100%;
+    background: var(--olive);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .poll-bar-fill.warn { background: var(--ocre); }
+  .poll-bar-fill.danger { background: var(--rouge); }
+  .poll-card .poll-foot {
+    font-size: 0.78rem;
+    color: rgba(243, 237, 226, 0.7);
+    line-height: 1.4;
+  }
+
+  /* TIME PROJECTION */
+  .projection {
+    background: var(--paper-deep);
+    border: 1px solid var(--ink);
+    padding: 2rem;
+  }
+
+  .projection h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .projection h3 em { color: var(--rouge); font-style: italic; font-weight: 400; }
+  .projection .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rouge);
+    margin-bottom: 1.5rem;
+  }
+
+  .proj-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .proj-row {
+    border-top: 1px dashed var(--ink-soft);
+    padding-top: 1rem;
+  }
+  .proj-row:first-child { border-top: none; padding-top: 0; }
+
+  .proj-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+  .proj-head .name {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+  .proj-head .halflife {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    background: var(--paper);
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--ink-soft);
+  }
+
+  .proj-text {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .proj-text strong {
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+  .proj-text .num-emph {
+    color: var(--rouge);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.05em;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    margin-top: 0.7rem;
+    height: 50px;
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--ink-soft);
+  }
+  .timeline-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--rouge) 0%, var(--ocre) 50%, var(--olive) 100%);
+    opacity: 0.85;
+    transition: width 0.8s ease;
+  }
+  .timeline-marks {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .timeline-mark {
+    width: 1px;
+    background: var(--ink);
+    opacity: 0.3;
+    height: 100%;
+  }
+  .timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-soft);
+    margin-top: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* TOP CONTRIBUTORS */
+  .contrib-section {
+    background: var(--paper-deep);
+    border: 1px solid var(--ink);
+    padding: 2rem;
+  }
+  .contrib-section h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .contrib-section h3 em { color: var(--ocre); font-style: italic; font-weight: 400; }
+  .contrib-section .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 1.5rem;
+  }
+
+  .contrib-pollutant-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border: 1px solid var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .contrib-tab {
+    flex: 1;
+    background: var(--paper);
+    border: none;
+    border-right: 1px solid var(--ink);
+    padding: 0.6rem 0.9rem;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 700;
+    min-width: 0;
+  }
+  .contrib-tab:last-child { border-right: none; }
+  .contrib-tab.active { background: var(--ink); color: var(--paper); }
+  .contrib-tab:hover:not(.active) { background: var(--paper-deeper); }
+
+  .contrib-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .contrib-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.7rem 0.9rem;
+    background: var(--paper);
+    border-left: 4px solid var(--rouge);
+    transition: transform 0.15s ease;
+  }
+  .contrib-item:hover { transform: translateX(3px); }
+  .contrib-item .food-lbl {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .contrib-item .qty-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+  .contrib-item .pct-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .empty-state {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+  .how h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    color: var(--paper);
+  }
+  .how p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: rgba(243, 237, 226, 0.85);
+    margin-bottom: 0.8rem;
+  }
+  .how p strong { color: var(--ocre); }
+  .how .sources-line {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(243, 237, 226, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: rgba(243, 237, 226, 0.65);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem 2.5rem;
+    margin-top: 4rem;
+  }
+  footer .footer-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+  }
+  footer h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 0.8rem;
+  }
+  footer a {
+    color: var(--paper);
+    text-decoration: underline;
+    text-decoration-color: var(--rouge);
+    text-underline-offset: 3px;
+  }
+  footer .colophon {
+    font-family: 'Fraunces', serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(243, 237, 226, 0.7);
+  }
+
+  /* MOBILE */
+  @media (max-width: 1024px) {
+    .main { grid-template-columns: 1fr; }
+    .panel { position: relative; max-height: none; top: 0; }
+    .pollutant-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .masthead { padding: 0.9rem 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
+    .hero { padding: 2.5rem 1.2rem 1.5rem; }
+    .main { padding: 0 1.2rem 3rem; }
+    .profile { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; }
+    .contrib-pollutant-tabs { flex-direction: column; }
+    .contrib-tab { border-right: none; border-bottom: 1px solid var(--ink); }
+    footer .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="title-block">
+      <span class="logo">EAT3 · <span>µg</span></span>
+      <span>Calculette d'exposition personnelle</span>
+    </div>
+    <span>D'après ANSES · EAT3 2026 + Cadmium 2026</span>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">Outil pédagogique — Estimation personnelle</div>
+    <h1>Combien de <em>polluants</em><br>dans votre journée ?</h1>
+    <p class="deck">
+      Saisissez votre profil et ce que vous mangez. La calculette estime l'apport en cadmium, plomb, acrylamide et aluminium pour chaque aliment, le compare aux seuils sanitaires de référence et projette comment votre organisme l'éliminera — ou l'accumulera — sur les jours, semaines, et années à venir.
+    </p>
+    <div class="disclaimer">
+      <strong>⚠ Limites de l'outil</strong>
+      Les concentrations utilisées sont des moyennes nationales (EAT3, ANSES 2026) — votre exposition réelle peut varier selon l'origine et la marque. Les calculs d'élimination sont des modèles à compartiment unique simplifiés. Cet outil est <em>pédagogique</em> et n'a aucune valeur diagnostique. Il ne remplace ni un avis médical ni un dosage biologique.
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- LEFT PANEL: INPUTS -->
+    <aside class="panel">
+      <div class="section-title" style="margin-bottom: 1rem; padding-bottom: 0.6rem;">
+        <span class="num">§ 01</span>
+        <h2>Votre journée</h2>
+      </div>
+
+      <!-- PROFIL -->
+      <div class="profile">
+        <div class="field">
+          <label for="bw">Poids corporel</label>
+          <input type="number" id="bw" value="70" min="3" max="200" step="1">
+        </div>
+        <div class="field">
+          <label for="agecat">Catégorie d'âge</label>
+          <select id="agecat">
+            <option value="adult">Adulte (18+)</option>
+            <option value="child">Enfant (3-17 ans)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PRESETS -->
+      <div class="presets">
+        <button class="preset-btn" data-preset="fr_typical">Régime français typique</button>
+        <button class="preset-btn" data-preset="veggie">Plus végétal / céréalier</button>
+        <button class="preset-btn" data-preset="fish">Amateur de poisson</button>
+        <button class="preset-btn" data-preset="bigeater">Petit-déj costaud</button>
+      </div>
+
+      <!-- SEARCH + CATEGORIES -->
+      <div class="food-search">
+        <input type="text" id="search" placeholder="Rechercher un aliment...">
+      </div>
+
+      <div class="food-categories" id="categories"></div>
+
+      <!-- FOOD LIST -->
+      <div class="food-list-wrap">
+        <div id="foodlist"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btn-reset">Tout effacer</button>
+        <button class="btn btn-primary" id="btn-calculate">Calculer</button>
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL: RESULTS -->
+    <section class="results">
+
+      <!-- DAY OVERVIEW -->
+      <div class="day-overview">
+        <span class="sub">§ 02 — Apport sur la journée</span>
+        <h3>Votre exposition <em>aujourd'hui</em></h3>
+        <p style="font-size: 0.9rem; line-height: 1.55; color: rgba(243, 237, 226, 0.75); max-width: 600px;">
+          Pour chaque polluant : la quantité ingérée pour la journée saisie, et sa proportion par rapport au seuil sanitaire de référence de l'ANSES (DJT/MOE pondérés à votre poids).
+        </p>
+        <div class="pollutant-grid" id="poll-grid"></div>
+      </div>
+
+      <!-- TIME PROJECTION -->
+      <div class="projection">
+        <span class="sub">§ 03 — Pharmacocinétique</span>
+        <h3>Le temps qu'il <em>faudrait</em> pour éliminer</h3>
+        <p style="font-size: 0.95rem; line-height: 1.55; color: var(--ink-soft); margin-bottom: 1rem; max-width: 700px;">
+          Si vous arrêtiez aujourd'hui toute exposition à ces polluants, voici combien de temps prendrait votre corps pour les évacuer. Si vous continuez à consommer la même chose chaque jour, voici le niveau d'imprégnation auquel vous tendez à long terme.
+        </p>
+        <div class="proj-rows" id="projection-rows"></div>
+      </div>
+
+      <!-- TOP CONTRIBUTORS -->
+      <div class="contrib-section">
+        <span class="sub">§ 04 — Origine de l'exposition</span>
+        <h3>Quels <em>aliments</em> apportent le plus ?</h3>
+        <p style="font-size: 0.95rem; line-height: 1.55; color: var(--ink-soft); margin-bottom: 1rem; max-width: 700px;">
+          Pour chaque polluant, le classement des aliments que vous consommez par leur contribution réelle à votre apport — concentration × quantité.
+        </p>
+        <div class="contrib-pollutant-tabs" id="tabs"></div>
+        <div class="contrib-list" id="contrib-list"></div>
+      </div>
+
+      <!-- HOW IT WORKS -->
+      <div class="how">
+        <h3>Comment l'outil calcule</h3>
+        <p>
+          <strong>Apport quotidien :</strong> pour chaque aliment, multiplication de la concentration moyenne EAT3 (ANSES 2026) par la quantité que vous avez saisie. Somme par polluant. Comparaison à la <strong>DJT</strong> (cadmium, aluminium) ou à la <strong>BMDL/MOE critique</strong> (acrylamide neurotoxique et cancérogène, plomb néphrotoxique et neurotoxique enfants), pondérée par votre poids corporel.
+        </p>
+        <p>
+          <strong>Élimination :</strong> modèle de décroissance exponentielle à compartiment unique (C(t) = C₀·exp(-ln(2)·t/T½)) avec les demi-vies biologiques de référence. Le cadmium s'accumule sur des décennies (T½ ≈ 10-30 ans) ; le plomb se fixe dans les os pour des années (T½ ≈ 10-30 ans aussi pour l'os, 30 jours pour le sang) ; l'aluminium est éliminé en quelques jours pour l'essentiel ; l'acrylamide est métabolisé en heures. Les modèles utilisés sont volontairement simplifiés.
+        </p>
+        <p>
+          <strong>Niveau d'imprégnation à long terme :</strong> pour les polluants persistants (cadmium, plomb), si l'exposition quotidienne d'aujourd'hui se poursuit sur le long terme, le corps tend vers un état stationnaire ≈ apport quotidien × (T½ / ln(2)) — c'est la quantité accumulée plateau.
+        </p>
+        <div class="sources-line">
+          Données EAT3 Tableau 6 (concentrations LB) + valeurs sanitaires Tableaux 1-2 + paramètres pharmacocinétiques EFSA / ANSES / ATSDR
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>Source des données</h4>
+        <p class="colophon">
+          Concentrations alimentaires : <a href="https://www.anses.fr/system/files/ERCA2019-SA-0010-RA-2.pdf" target="_blank">EAT3 — Tome 1 (ANSES, janvier 2026)</a>, Tableau 6, hypothèse basse, échantillons bio + conventionnels confondus, préparés tels que consommés.<br><br>
+          Valeurs sanitaires : DJT cadmium (ANSES 2019), DJT aluminium (ANSES 2024), BMDL acrylamide (EFSA 2015), BMDL plomb (ANSES 2013, EFSA 2010).<br><br>
+          Demi-vies biologiques : ATSDR, EFSA, OMS.
+        </p>
+      </div>
+      <div>
+        <h4>Voir aussi</h4>
+        <p style="font-size: 0.9rem; line-height: 1.5; color: rgba(243, 237, 226, 0.7);">
+          <a href="EAT3_polluants.html">Vue d'ensemble EAT3</a><br>
+          <a href="Cadmium_focus.html">Focus cadmium</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ===== DATA: aliments avec concentrations en polluants =====
+// Sources :
+//  - Tableau 6 EAT3 (ANSES janvier 2026) pour Al, Cd, Pb
+//  - Tableau 4 EAT3 pour acrylamide
+// Concentrations en µg/kg pour Cd, Pb, acrylamide ; en mg/kg pour aluminium
+// Format : { id, label, sub, group, defaultPortion (g), pollutants: {Cd, Pb, Acr, Al} }
+
+const FOODS = [
+  // ===== Pain et céréales =====
+  { id: "pain_blanc",       label: "Pain blanc / baguette",                sub: "1 tranche ≈ 30 g",  group: "Céréales & pain",     portion: 30,  Cd: 20,   Pb: 7.7,  Acr: 22,  Al: 4.1 },
+  { id: "pain_complet",     label: "Pain complet ou semi-complet",         sub: "1 tranche ≈ 40 g",  group: "Céréales & pain",     portion: 40,  Cd: 22,   Pb: 6.8,  Acr: 22,  Al: 4.0 },
+  { id: "cereales_pdj",     label: "Céréales du petit-déjeuner",            sub: "1 bol ≈ 40 g",      group: "Céréales & pain",     portion: 40,  Cd: 28,   Pb: 8.1,  Acr: 36,  Al: 6.1 },
+  { id: "pates_raff",       label: "Pâtes blanches (cuites)",               sub: "1 portion ≈ 200 g", group: "Céréales & pain",     portion: 200, Cd: 9.4,  Pb: 3.1,  Acr: 0,   Al: 1.2 },
+  { id: "pates_complet",    label: "Pâtes complètes / semi-complètes",      sub: "1 portion ≈ 200 g", group: "Céréales & pain",     portion: 200, Cd: 12,   Pb: 4.9,  Acr: 0,   Al: 1.9 },
+  { id: "riz_blanc",        label: "Riz blanc cuit",                        sub: "1 portion ≈ 200 g", group: "Céréales & pain",     portion: 200, Cd: 9.4,  Pb: 3.1,  Acr: 0,   Al: 1.2 },
+  { id: "riz_complet",      label: "Riz complet cuit",                      sub: "1 portion ≈ 200 g", group: "Céréales & pain",     portion: 200, Cd: 12,   Pb: 4.9,  Acr: 0,   Al: 1.9 },
+  { id: "viennoiserie",     label: "Viennoiserie (croissant, pain choco)",  sub: "1 pièce ≈ 60 g",    group: "Céréales & pain",     portion: 60,  Cd: 14,   Pb: 7.0,  Acr: 21,  Al: 3.9 },
+  { id: "biscuit_sucre",    label: "Biscuits / gâteaux sucrés",             sub: "1 portion ≈ 30 g",  group: "Céréales & pain",     portion: 30,  Cd: 14,   Pb: 7.0,  Acr: 21,  Al: 3.9 },
+  { id: "crepe",            label: "Crêpe / pancake",                       sub: "1 pièce ≈ 80 g",    group: "Céréales & pain",     portion: 80,  Cd: 14,   Pb: 7.0,  Acr: 15,  Al: 3.9 },
+  { id: "chips",            label: "Chips / biscuits salés",                sub: "1 sachet ≈ 30 g",   group: "Céréales & pain",     portion: 30,  Cd: 34,   Pb: 7.1,  Acr: 220, Al: 4.1 },
+
+  // ===== Pommes de terre =====
+  { id: "pdt_vapeur",       label: "Pommes de terre vapeur / bouillies",    sub: "1 portion ≈ 200 g", group: "Pommes de terre",     portion: 200, Cd: 29,   Pb: 2.0,  Acr: 50,  Al: 1.2 },
+  { id: "pdt_frites",       label: "Frites",                                sub: "1 portion ≈ 150 g", group: "Pommes de terre",     portion: 150, Cd: 29,   Pb: 2.0,  Acr: 390, Al: 1.2 },
+  { id: "pdt_sautees",      label: "Pommes de terre sautées",               sub: "1 portion ≈ 150 g", group: "Pommes de terre",     portion: 150, Cd: 29,   Pb: 2.0,  Acr: 570, Al: 1.2 },
+  { id: "puree",            label: "Purée de pommes de terre",              sub: "1 portion ≈ 200 g", group: "Pommes de terre",     portion: 200, Cd: 29,   Pb: 2.0,  Acr: 30,  Al: 1.2 },
+
+  // ===== Légumes =====
+  { id: "legumes_feuilles", label: "Légumes-feuilles (épinards, salade)",   sub: "1 portion ≈ 100 g", group: "Légumes",             portion: 100, Cd: 22,   Pb: 12,   Acr: 0,   Al: 4.5 },
+  { id: "legumes_racines",  label: "Légumes-racines (carottes, betteraves)",sub: "1 portion ≈ 150 g", group: "Légumes",             portion: 150, Cd: 18,   Pb: 9,    Acr: 0,   Al: 3.5 },
+  { id: "legumes_fruits",   label: "Légumes-fruits (tomates, courgettes)",  sub: "1 portion ≈ 150 g", group: "Légumes",             portion: 150, Cd: 8,    Pb: 5,    Acr: 0,   Al: 2.0 },
+  { id: "haricots_verts",   label: "Haricots verts / autres légumes verts", sub: "1 portion ≈ 150 g", group: "Légumes",             portion: 150, Cd: 12,   Pb: 7,    Acr: 0,   Al: 2.5 },
+  { id: "legumineuses",     label: "Légumineuses (lentilles, pois)",        sub: "1 portion ≈ 150 g", group: "Légumes",             portion: 150, Cd: 2.2,  Pb: 5.7,  Acr: 0,   Al: 3.4 },
+  { id: "soupe",            label: "Soupe de légumes",                      sub: "1 bol ≈ 250 g",     group: "Légumes",             portion: 250, Cd: 8.5,  Pb: 3.9,  Acr: 0,   Al: 1.5 },
+
+  // ===== Fruits =====
+  { id: "fruit_frais",      label: "Fruit frais (pomme, poire, orange)",    sub: "1 fruit ≈ 150 g",   group: "Fruits & noix",       portion: 150, Cd: 0.79, Pb: 2.8,  Acr: 1.8, Al: 0.66 },
+  { id: "compote",          label: "Compote",                               sub: "1 pot ≈ 100 g",     group: "Fruits & noix",       portion: 100, Cd: 0.79, Pb: 2.8,  Acr: 1.8, Al: 0.66 },
+  { id: "noix",             label: "Noix / fruits à coque",                 sub: "1 poignée ≈ 25 g",  group: "Fruits & noix",       portion: 25,  Cd: 20,   Pb: 24,   Acr: 20,  Al: 1.8 },
+  { id: "chocolat",         label: "Chocolat (tablette ≥50% cacao)",        sub: "1 carré ≈ 10 g",    group: "Fruits & noix",       portion: 30,  Cd: 58,   Pb: 11,   Acr: 20,  Al: 14 },
+
+  // ===== Produits laitiers =====
+  { id: "lait",             label: "Lait",                                  sub: "1 verre ≈ 200 ml",  group: "Lait & œufs",         portion: 200, Cd: 0.05, Pb: 0.69, Acr: 0,   Al: 0.052 },
+  { id: "yaourt",           label: "Yaourt / fromage blanc",                sub: "1 pot ≈ 125 g",     group: "Lait & œufs",         portion: 125, Cd: 0.11, Pb: 1.3,  Acr: 0,   Al: 0.32 },
+  { id: "fromage",          label: "Fromage",                               sub: "1 portion ≈ 30 g",  group: "Lait & œufs",         portion: 30,  Cd: 0.31, Pb: 5.0,  Acr: 0,   Al: 0.40 },
+  { id: "creme_dessert",    label: "Crème dessert / entremets",             sub: "1 pot ≈ 100 g",     group: "Lait & œufs",         portion: 100, Cd: 5.5,  Pb: 2.1,  Acr: 1.0, Al: 1.7 },
+  { id: "glace",            label: "Glace / dessert glacé",                 sub: "1 boule ≈ 60 g",    group: "Lait & œufs",         portion: 60,  Cd: 2.4,  Pb: 2.6,  Acr: 5,   Al: 1.3 },
+  { id: "oeufs",            label: "Œufs",                                  sub: "1 œuf ≈ 60 g",      group: "Lait & œufs",         portion: 60,  Cd: 2.6,  Pb: 1.5,  Acr: 0,   Al: 0.33 },
+
+  // ===== Viandes =====
+  { id: "viande_rouge",     label: "Viande rouge (bœuf, agneau, porc)",     sub: "1 portion ≈ 120 g", group: "Viandes & charcut.",  portion: 120, Cd: 0.17, Pb: 2.0,  Acr: 0,   Al: 0.35 },
+  { id: "volaille",         label: "Volaille (poulet, dinde)",              sub: "1 portion ≈ 120 g", group: "Viandes & charcut.",  portion: 120, Cd: 1.2,  Pb: 1.5,  Acr: 8.5, Al: 0.43 },
+  { id: "charcuterie",      label: "Charcuterie (jambon, saucisson)",       sub: "1 portion ≈ 50 g",  group: "Viandes & charcut.",  portion: 50,  Cd: 2.5,  Pb: 5.8,  Acr: 0,   Al: 1.9 },
+  { id: "abats",            label: "Abats (foie, rognons)",                 sub: "1 portion ≈ 100 g", group: "Viandes & charcut.",  portion: 100, Cd: 51,   Pb: 14,   Acr: 0,   Al: 1.5 },
+
+  // ===== Poisson & fruits de mer =====
+  { id: "poisson_blanc",    label: "Poisson blanc (cabillaud, colin)",      sub: "1 portion ≈ 130 g", group: "Poissons & mer",      portion: 130, Cd: 6.4,  Pb: 4.6,  Acr: 0,   Al: 0.86 },
+  { id: "poisson_gras",     label: "Poisson gras (saumon, maquereau)",      sub: "1 portion ≈ 130 g", group: "Poissons & mer",      portion: 130, Cd: 6.4,  Pb: 4.6,  Acr: 0,   Al: 0.86 },
+  { id: "thon",             label: "Thon (frais ou en boîte)",              sub: "1 portion ≈ 100 g", group: "Poissons & mer",      portion: 100, Cd: 6.4,  Pb: 4.6,  Acr: 0,   Al: 0.86 },
+  { id: "crustaces",        label: "Crustacés / mollusques",                sub: "1 portion ≈ 100 g", group: "Poissons & mer",      portion: 100, Cd: 81,   Pb: 34,   Acr: 0,   Al: 21 },
+  { id: "poisson_pane",     label: "Poisson pané",                          sub: "2 pavés ≈ 130 g",   group: "Poissons & mer",      portion: 130, Cd: 6.4,  Pb: 4.6,  Acr: 0,   Al: 0.86 },
+
+  // ===== Plats préparés =====
+  { id: "pizza",            label: "Pizza / tarte salée",                   sub: "1 part ≈ 150 g",    group: "Plats & boissons",    portion: 150, Cd: 9.6,  Pb: 5.1,  Acr: 15,  Al: 2.6 },
+  { id: "sandwich",         label: "Sandwich",                              sub: "1 sandwich ≈ 200 g",group: "Plats & boissons",    portion: 200, Cd: 9.6,  Pb: 5.1,  Acr: 15,  Al: 2.6 },
+  { id: "salade_composee",  label: "Salade composée",                       sub: "1 portion ≈ 250 g", group: "Plats & boissons",    portion: 250, Cd: 9.8,  Pb: 5.0,  Acr: 0,   Al: 1.7 },
+  { id: "plat_pdt",         label: "Plat à base de pommes de terre",        sub: "1 portion ≈ 250 g", group: "Plats & boissons",    portion: 250, Cd: 11,   Pb: 3.2,  Acr: 21,  Al: 1.4 },
+  { id: "plat_viande",      label: "Plat à base de viande (préparé)",       sub: "1 portion ≈ 250 g", group: "Plats & boissons",    portion: 250, Cd: 5.4,  Pb: 5.8,  Acr: 6.8, Al: 1.9 },
+
+  // ===== Boissons =====
+  { id: "eau_robinet",      label: "Eau du robinet",                        sub: "1 verre ≈ 250 ml",  group: "Plats & boissons",    portion: 250, Cd: 0,    Pb: 1.0,  Acr: 0,   Al: 0.05 },
+  { id: "eau_bouteille",    label: "Eau embouteillée",                      sub: "1 verre ≈ 250 ml",  group: "Plats & boissons",    portion: 250, Cd: 0.004,Pb: 0.05, Acr: 0,   Al: 0.0056 },
+  { id: "cafe",             label: "Café",                                  sub: "1 tasse ≈ 100 ml",  group: "Plats & boissons",    portion: 100, Cd: 1.5,  Pb: 1.4,  Acr: 2.5, Al: 1.2 },
+  { id: "the",              label: "Thé / tisane",                          sub: "1 tasse ≈ 200 ml",  group: "Plats & boissons",    portion: 200, Cd: 1.5,  Pb: 1.4,  Acr: 2.5, Al: 1.2 },
+  { id: "jus_fruit",        label: "Jus de fruits",                         sub: "1 verre ≈ 200 ml",  group: "Plats & boissons",    portion: 200, Cd: 0.084,Pb: 2.2,  Acr: 0,   Al: 0.33 },
+  { id: "soda",             label: "Soda / boisson sucrée",                 sub: "1 cannette ≈ 330 ml",group: "Plats & boissons",   portion: 330, Cd: 0.007,Pb: 0.81, Acr: 0,   Al: 0.31 },
+  { id: "vin",              label: "Vin",                                   sub: "1 verre ≈ 125 ml",  group: "Plats & boissons",    portion: 125, Cd: 0.10, Pb: 5.5,  Acr: 0,   Al: 0.39 },
+  { id: "biere",            label: "Bière",                                 sub: "1 demi ≈ 250 ml",   group: "Plats & boissons",    portion: 250, Cd: 0.10, Pb: 5.5,  Acr: 0,   Al: 0.39 },
+];
+
+// ===== POLLUANTS : seuils et demi-vies =====
+// Pour Cd : DJT 0,35 µg/kg pc/j (ANSES 2019)
+// Pour Pb : BMDL10 néphro 0,63 µg/kg pc/j (adultes) ; BMDL01 neuro 0,5 µg/kg pc/j (enfants) ; MOE critique 10 → "seuil" pratique = BMDL/10
+// Pour Acrylamide : BMDL10 cancer 0,17 µg/kg pc/j (le plus contraignant) ; MOE crit 10000 → "seuil" pratique = BMDL/10000
+// Pour Al : VTR 40 µg/kg pc/j (ANSES 2024)
+//
+// Demi-vies biologiques (T½) : on utilise des valeurs représentatives pour le compartiment dominant
+// - Cd : 10-30 ans (corps entier ; rein principal). On prend 17 ans (≈moyenne géom).
+// - Pb : os 10-30 ans, sang 30 j. On prend 10 ans (compartiment osseux dominant en charge totale).
+// - Acrylamide : quelques heures (hépatique et conjugaison GSH). On prend 7 h.
+// - Al : excrétion rénale 7 jours majoritaire ; mais persistance partielle os/cerveau plus longue. On prend 7 jours.
+
+const POLLUTANTS = {
+  Cd: {
+    label: "Cadmium",
+    short: "Cd",
+    unit: "µg",
+    color: "#b22222",
+    // seuil pratique journalier (µg/kg pc/j)
+    thresholdAdult: 0.35,
+    thresholdChild: 0.35,
+    thresholdLabel: "DJT (ANSES 2019)",
+    thresholdLabelLong: "Dose journalière tolérable",
+    halflife_days: 17 * 365,
+    halflife_label: "≈ 10–30 ans (rein, os)",
+    description: "Métal lourd cancérogène, néphrotoxique et déminéralisant osseux. Stocké pendant des décennies."
+  },
+  Pb: {
+    label: "Plomb",
+    short: "Pb",
+    unit: "µg",
+    color: "#7a1717",
+    thresholdAdult: 0.063, // BMDL10 0,63 / MOE 10 — néphro adultes
+    thresholdChild: 0.05,  // BMDL01 0,5 / MOE 10 — neuro enfants
+    thresholdLabel: "BMDL/MOEcrit (EFSA-ANSES)",
+    thresholdLabelLong: "Marge d'exposition critique",
+    halflife_days: 10 * 365,
+    halflife_label: "≈ 30 j (sang) / 10–30 ans (os)",
+    description: "Neurotoxique pour le développement de l'enfant. Néphrotoxique. Pas de seuil sans effet."
+  },
+  Acr: {
+    label: "Acrylamide",
+    short: "Acr",
+    unit: "µg",
+    color: "#c8852b",
+    thresholdAdult: 0.43 / 125,  // BMDL10 neuro 0,43 / MOE crit 125 (pour effet neuro)
+    thresholdChild: 0.17 / 10000, // pour effet cancérogène, MOE 10000 → ≈ 0,000017 — beaucoup plus bas
+    thresholdLabel: "BMDL/MOEcrit (EFSA 2015)",
+    thresholdLabelLong: "Cancérogène & neurotoxique",
+    halflife_days: 0.3, // ≈ 7h
+    halflife_label: "≈ heures",
+    description: "Formé à la cuisson (>120 °C) à partir d'asparagine + sucres. Cancérogène probable."
+  },
+  Al: {
+    label: "Aluminium",
+    short: "Al",
+    unit: "µg",
+    color: "#6a7a3f",
+    thresholdAdult: 40, // VTR ANSES 2024 = 40 µg/kg pc/j
+    thresholdChild: 40,
+    thresholdLabel: "VTR (ANSES 2024)",
+    thresholdLabelLong: "Valeur toxicologique de référence",
+    halflife_days: 7,
+    halflife_label: "≈ 7 jours (rein) / années (os, cerveau)",
+    description: "Neurotoxique chronique. Très répandu (ustensiles, additifs, eau, blé...)"
+  }
+};
+
+// ===== PRESETS =====
+const PRESETS = {
+  fr_typical: {
+    label: "Régime français typique (adulte)",
+    items: { pain_blanc: 4, viennoiserie: 1, cafe: 2, lait: 1, fromage: 1, viande_rouge: 1, pates_raff: 1, legumes_fruits: 1, fruit_frais: 2, vin: 1, eau_robinet: 4, biscuit_sucre: 2 }
+  },
+  veggie: {
+    label: "Régime plus végétal/céréalier",
+    items: { pain_complet: 4, cereales_pdj: 1, legumineuses: 1, legumes_feuilles: 1, legumes_racines: 1, fruit_frais: 3, yaourt: 1, noix: 1, the: 2, eau_robinet: 5, riz_complet: 1 }
+  },
+  fish: {
+    label: "Amateur de poisson",
+    items: { pain_blanc: 3, poisson_gras: 1, thon: 0.5, crustaces: 0.3, riz_blanc: 1, legumes_feuilles: 1, fruit_frais: 1, fromage: 1, eau_robinet: 4, the: 1 }
+  },
+  bigeater: {
+    label: "Petit-déj costaud",
+    items: { cereales_pdj: 1.5, lait: 1, viennoiserie: 2, jus_fruit: 1, cafe: 2, biscuit_sucre: 2, pain_blanc: 2, pates_raff: 1, frites: 1, viande_rouge: 1 }
+  }
+};
+
+// ===== STATE =====
+let state = {
+  bw: 70,
+  age: "adult",
+  consumption: {} // { foodId: portionsCount }
+};
+
+// ===== INIT =====
+function init() {
+  buildCategories();
+  buildFoodList();
+  bindEvents();
+  calculate();
+}
+
+function buildCategories() {
+  const groups = [...new Set(FOODS.map(f => f.group))];
+  const ctn = document.getElementById('categories');
+  ctn.innerHTML = '<button class="cat-btn active" data-group="all">Tous les aliments <span class="arrow">›</span></button>'
+    + groups.map(g => {
+        const count = FOODS.filter(f => f.group === g).length;
+        return `<button class="cat-btn" data-group="${g}">${g} <span class="arrow">${count}</span></button>`;
+      }).join('');
+  ctn.querySelectorAll('.cat-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      ctn.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      filterFoods(b.dataset.group, document.getElementById('search').value);
+    });
+  });
+}
+
+function buildFoodList() {
+  const ctn = document.getElementById('foodlist');
+  ctn.innerHTML = FOODS.map(f => `
+    <div class="food-row" data-id="${f.id}" data-group="${f.group}">
+      <div class="food-name">${f.label}<span class="sub">${f.sub}</span></div>
+      <input type="number" class="qty-input" data-id="${f.id}" min="0" max="20" step="0.5" value="0" placeholder="0">
+      <span class="unit">×</span>
+    </div>
+  `).join('');
+  ctn.querySelectorAll('.qty-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const id = inp.dataset.id;
+      const v = parseFloat(inp.value) || 0;
+      if (v > 0) state.consumption[id] = v;
+      else delete state.consumption[id];
+      calculate();
+    });
+  });
+}
+
+function filterFoods(group, q) {
+  const ql = (q || '').toLowerCase().trim();
+  document.querySelectorAll('.food-row').forEach(row => {
+    const matchGroup = group === 'all' || row.dataset.group === group;
+    const label = row.querySelector('.food-name').textContent.toLowerCase();
+    const matchSearch = !ql || label.includes(ql);
+    row.classList.toggle('hidden', !(matchGroup && matchSearch));
+  });
+}
+
+function bindEvents() {
+  document.getElementById('bw').addEventListener('input', e => {
+    state.bw = parseFloat(e.target.value) || 70;
+    calculate();
+  });
+  document.getElementById('agecat').addEventListener('change', e => {
+    state.age = e.target.value;
+    calculate();
+  });
+  document.getElementById('search').addEventListener('input', e => {
+    const activeGroup = document.querySelector('.cat-btn.active').dataset.group;
+    filterFoods(activeGroup, e.target.value);
+  });
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    state.consumption = {};
+    document.querySelectorAll('.qty-input').forEach(i => i.value = 0);
+    calculate();
+  });
+  document.getElementById('btn-calculate').addEventListener('click', calculate);
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.addEventListener('click', () => loadPreset(b.dataset.preset));
+  });
+}
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  if (!p) return;
+  state.consumption = { ...p.items };
+  document.querySelectorAll('.qty-input').forEach(i => {
+    const id = i.dataset.id;
+    i.value = state.consumption[id] || 0;
+  });
+  calculate();
+}
+
+// ===== CALCULATIONS =====
+function calculate() {
+  // 1) compute total intake per pollutant + per-food contributions
+  const intakes = { Cd: 0, Pb: 0, Acr: 0, Al: 0 };
+  const contribs = { Cd: [], Pb: [], Acr: [], Al: [] };
+
+  for (const [foodId, count] of Object.entries(state.consumption)) {
+    const food = FOODS.find(f => f.id === foodId);
+    if (!food) continue;
+    const grams = food.portion * count;
+    // grams → kg : /1000
+    // Cd, Pb, Acr in µg/kg ; Al in mg/kg → convert Al to µg : ×1000
+    const cdAmt  = food.Cd  * grams / 1000;          // µg
+    const pbAmt  = food.Pb  * grams / 1000;          // µg
+    const acrAmt = food.Acr * grams / 1000;          // µg
+    const alAmt  = food.Al  * grams / 1000 * 1000;   // µg (mg/kg * g / 1000 * 1000 = mg/kg * g)
+
+    intakes.Cd += cdAmt;
+    intakes.Pb += pbAmt;
+    intakes.Acr += acrAmt;
+    intakes.Al += alAmt;
+
+    if (cdAmt > 0)  contribs.Cd.push({ food: food.label, sub: `${count}× (${grams} g)`, amount: cdAmt });
+    if (pbAmt > 0)  contribs.Pb.push({ food: food.label, sub: `${count}× (${grams} g)`, amount: pbAmt });
+    if (acrAmt > 0) contribs.Acr.push({ food: food.label, sub: `${count}× (${grams} g)`, amount: acrAmt });
+    if (alAmt > 0)  contribs.Al.push({ food: food.label, sub: `${count}× (${grams} g)`, amount: alAmt });
+  }
+
+  // 2) compare to thresholds (per kg body weight)
+  renderDayOverview(intakes);
+
+  // 3) render projection / accumulation
+  renderProjection(intakes);
+
+  // 4) render contributors
+  renderContributors(contribs);
+}
+
+function renderDayOverview(intakes) {
+  const grid = document.getElementById('poll-grid');
+  const cards = Object.entries(POLLUTANTS).map(([key, info]) => {
+    const intake = intakes[key];
+    const threshold = (state.age === 'child' ? info.thresholdChild : info.thresholdAdult) * state.bw; // µg/j
+    const pct = threshold > 0 ? (intake / threshold * 100) : 0;
+    let level = 'ok', label = 'sous le seuil', barCls = '';
+    if (pct >= 100) { level = 'danger'; label = 'au-dessus du seuil'; barCls = 'danger'; }
+    else if (pct >= 50) { level = 'warn'; label = 'proche du seuil'; barCls = 'warn'; }
+
+    const display = intake < 0.01 ? intake.toFixed(3) : intake < 1 ? intake.toFixed(2) : intake < 100 ? intake.toFixed(1) : Math.round(intake);
+    const tdisp = threshold < 1 ? threshold.toFixed(2) : threshold < 100 ? threshold.toFixed(1) : Math.round(threshold);
+
+    return `
+      <div class="poll-card">
+        <div class="poll-name">${info.label} (${info.short})</div>
+        <div class="poll-amount">${display}<sup>µg</sup></div>
+        <div class="poll-pct ${level}">${pct.toFixed(0)} % du seuil — ${label}</div>
+        <div class="poll-bar"><div class="poll-bar-fill ${barCls}" style="width: ${Math.min(100, pct)}%;"></div></div>
+        <div class="poll-foot">Seuil journalier pour vous : ${tdisp} µg<br><span style="opacity:.7">${info.thresholdLabel}</span></div>
+      </div>
+    `;
+  }).join('');
+  grid.innerHTML = cards;
+}
+
+function renderProjection(intakes) {
+  const ctn = document.getElementById('projection-rows');
+
+  const rows = Object.entries(POLLUTANTS).map(([key, info]) => {
+    const dailyIntake = intakes[key]; // µg/j
+    const halflife_d = info.halflife_days;
+    // approximate steady-state body burden (1-compartment) ≈ daily * halflife / ln(2)
+    const ssBurden = dailyIntake * halflife_d / Math.LN2;
+    // time to eliminate 99 % after stop : ≈ 6.6 × T½
+    const timeTo99 = halflife_d * 6.6;
+
+    // formatting helpers
+    const fmtTime = (days) => {
+      if (days < 1) return `${(days * 24).toFixed(1)} heures`;
+      if (days < 30) return `${days.toFixed(0)} jours`;
+      if (days < 365) return `${(days / 30).toFixed(1)} mois`;
+      return `${(days / 365).toFixed(1)} ans`;
+    };
+    const fmtAmount = (a) => {
+      if (a < 0.001) return `${(a * 1000).toFixed(2)} ng`;
+      if (a < 1)     return `${a.toFixed(3)} µg`;
+      if (a < 1000)  return `${a.toFixed(1)} µg`;
+      if (a < 1e6)   return `${(a / 1000).toFixed(1)} mg`;
+      return `${(a / 1e6).toFixed(2)} g`;
+    };
+
+    let bodyText;
+    if (dailyIntake < 0.001) {
+      bodyText = `<span style="color:var(--ink-soft);font-style:italic;">Aucun apport calculé pour les aliments saisis.</span>`;
+    } else {
+      const a99 = fmtTime(timeTo99);
+      const ss = fmtAmount(ssBurden);
+      const halflbl = fmtTime(halflife_d);
+      bodyText = `
+        Avec votre journée saisie, vous absorbez <strong>${fmtAmount(dailyIntake)}</strong> de ${info.label.toLowerCase()}.
+        En supposant que vous arrêtiez tout apport dès demain, votre corps mettrait <span class="num-emph">${a99}</span> pour en éliminer ~99 %
+        (la demi-vie biologique est de <strong>${halflbl}</strong>).
+        Si au contraire vous continuez ce même régime au quotidien, votre charge corporelle tendra vers
+        un plateau d'environ <span class="num-emph">${ss}</span>.
+      `;
+    }
+
+    // timeline width = scaled factor of body burden at steady-state vs. arbitrary reference
+    // for the visual: % filling proportional to ratio of timeTo99 to a max scale (cadmium 100 yrs ≈ 36500 d)
+    const maxScale = 100 * 365; // 100 years
+    const fillPct = Math.min(100, (timeTo99 / maxScale) * 100);
+    const labels = halflife_d < 1
+      ? ['0', '1 j', '7 j', '1 mois', '1 an']
+      : halflife_d < 30
+        ? ['0', '7 j', '1 mois', '6 mois', '1 an']
+        : halflife_d < 365
+          ? ['0', '1 mois', '1 an', '5 ans', '10 ans']
+          : ['0', '5 ans', '20 ans', '50 ans', '100 ans'];
+
+    return `
+      <div class="proj-row">
+        <div class="proj-head">
+          <span class="name">${info.label}</span>
+          <span class="halflife">T½ ${info.halflife_label}</span>
+        </div>
+        <div class="proj-text">${bodyText}</div>
+        <div class="timeline">
+          <div class="timeline-fill" style="width: ${fillPct}%;"></div>
+          <div class="timeline-marks">
+            ${[0,25,50,75,100].map(p => `<div class="timeline-mark" style="left: ${p}%;"></div>`).join('')}
+          </div>
+        </div>
+        <div class="timeline-labels">
+          ${labels.map(l => `<span>${l}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+  ctn.innerHTML = rows;
+}
+
+function renderContributors(contribs) {
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = Object.entries(POLLUTANTS).map(([k, p], i) => `
+    <button class="contrib-tab ${i === 0 ? 'active' : ''}" data-poll="${k}">${p.label}</button>
+  `).join('');
+  tabs.querySelectorAll('.contrib-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.querySelectorAll('.contrib-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      drawContribList(t.dataset.poll, contribs);
+    });
+  });
+  drawContribList(Object.keys(POLLUTANTS)[0], contribs);
+}
+
+function drawContribList(pollKey, contribs) {
+  const list = document.getElementById('contrib-list');
+  const arr = (contribs[pollKey] || []).slice().sort((a, b) => b.amount - a.amount);
+  if (arr.length === 0) {
+    list.innerHTML = `<div class="empty-state">Aucun aliment saisi ne contient de ce polluant — ou vous n'avez encore rien ajouté.</div>`;
+    return;
+  }
+  const total = arr.reduce((s, x) => s + x.amount, 0);
+  const fmt = (a) => a < 0.001 ? `${(a*1000).toFixed(2)} ng` : a < 1 ? `${a.toFixed(3)} µg` : a < 1000 ? `${a.toFixed(1)} µg` : `${(a/1000).toFixed(2)} mg`;
+  list.innerHTML = arr.map(c => `
+    <div class="contrib-item">
+      <div>
+        <div class="food-lbl">${c.food}</div>
+        <div class="qty-lbl">${c.sub}</div>
+      </div>
+      <div class="pct-lbl">${fmt(c.amount)}</div>
+      <div class="pct-lbl" style="color:var(--rouge)">${(c.amount / total * 100).toFixed(0)} %</div>
+    </div>
+  `).join('');
+}
+
+// GO
+init();
+</script>
+</body>
+</html>
